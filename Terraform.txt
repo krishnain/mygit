@@ -1,0 +1,172 @@
+===================
+=====Terraform=====
+===================
+This is  tool from Hashi corp to automate infrastructure creation
+It can be integrated with various "providers" like AWS,Azure etc
+
+Setup of terraform on Windows
+===============================
+1 Open https://www.terraform.io/downloads.html
+
+2 Download the version related to windows and extract it
+
+3 Copy the path of the terraform that is extracted
+
+4 Go to Environment varibles--->System varibales--->Hilight Path
+
+5 Click on New and Paste the path of terraform
+
+6 To check if terraform is configures
+  Open cmd prompt
+  terraform -v
+
+======================================================================
+Creating terrafrom scripts on Pycharm IDE
+===========================================
+1 Download and install Pycharm community edition 
+  https://www.jetbrains.com/pycharm/download/
+
+2 Download Terraform pycharm plugin
+  https://plugins.jetbrains.com/plugin/7808-hashicorp-terraform--hcl-language-support/reviews
+
+3 Open pycharm --->Click on File menu--->Setting--->Plugins
+  Click on Setting icon--->Select Plugins from Disk
+  Browse for the Pycharm terraform plugin
+  Restart Pycharm
+
+=========================================================================
+Create IAM user on AWS and give him admin previlages
+Download the user info csv file
+
+=======================================================================
+Providers
+===============
+This is a code library that can communicate with a specific technology
+like AWS,Jenkins,Azure etc
+Providers translate the terrafrom code into a structure that
+the technology can understand
+
+Provider gives access to the complete API of AWS
+
+
+Provides has two components resources and data sources
+resources is used to create services on the aws cloud
+data sources allows us to fetch information about the resources present on AWS
+
+provider "aws" {
+  region = "us-east-1"
+  access_key = "zzzzzzzzzzzzzzzzzzzzz"
+  secret_key = "zzzzzzzzzzzzzzzzzzzzzzz"
+}
+
+To download the above provider 
+Go to the folder where the main.tf folder is present in cmd prompt
+terraform init
+
+Note:
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+It also downloads the code library that helps terraform to integrate with AWS
+
+All the terraform providers info is present at
+registry.terrafrom.io/browse/providers
+======================================================================
+Resources
+===============
+These are subcomponents or modules present in providers which help us
+to automate various services on AWS
+
+Resource naming conventions
+providername_resourcename
+
+=======================================================================
+Terrafrom script to install the AWS providers and create
+a vpc and subnet with it and also an aws ubuntu isntance
+
+
+resource "aws_vpc" "my_vpc" {
+  cidr_block = "10.0.0.0/24"
+}
+
+resource "aws_subnet" "my_subnet" {
+  cidr_block = "10.0.0.0/25"
+  vpc_id = aws_vpc.my_vpc.id
+  availability_zone = "us-east-2a"
+}
+
+resource "aws_instance" "intelliqit" {
+  ami  = "ami-a1b2c3d4"
+  instance_type = "t2.micro"
+}
+
+
+========================================================================
+Documentation
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+==============================================================================
+==========================================================================
+Naming resource in AWS
+============================
+This is done using tags
+
+resource "aws_vpc" "my_vpc" {
+  cidr_block = "10.0.0.0/24"
+  tags = {
+     Name= "my_vpc"
+  }
+}
+
+resource "aws_subnet" "my_subnet1" {
+  cidr_block = "10.0.0.0/25"
+  vpc_id = aws_vpc.my_vpc.id
+  availability_zone = "us-east-2a"
+  tags = {
+     Name= "my_subet1"
+  }
+}
+
+resource "aws_instance" "web" {
+  ami  = "ami-a1b2c3d4"
+  instance_type = "t2.micro"
+  tags = {
+     Name= "intelliqit"
+  }
+}
+
+=================================================================================
+
+===========================================================================
+
+To destory the above resources
+terrafrom destroy -target aws_subnet.mysubnet1
+
+To destory everyting
+terrafrom destroy
+
+terrafrom plan : This shows the same output as terrafrom apply but
+without making the necessary changes(dry run)
+su
+terrafrom apply -auto-approve             like -y option in apt
+
+
+Terrafrom state commands
+terrafrom state list
+terrafrom state show give_resource_name_from_above_output
+
+=======================================================================
+Output values
+=======================
+This is print statements of terrafrom using which we can print info about resources running on aws
+Only one value can be given per resource
+output "some_name_for_output" {
+   value = resource_type.resource_name.attribute
+  Eg:
+  value = aws_vpc.myvpc.id
+}
+To see the list of attributes available run
+terraform apply
+
+==============================================
